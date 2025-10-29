@@ -2,7 +2,7 @@
 
 Olá, me chamo Anderson e estou escrevendo essa guia para tentar ajudar pessoas que querem entender mais a fundo como a memória do seu computador funciona.
 
-Esse guia existe porque anteriormente estava fazendo todas as anotações na mão, o que era tedioso, então resolvi escrever no teclado e pensei em criar um repositório no Github para manter minhas anotações públicas no caso de alguem precisar
+Esse guia existe porque anteriormente estava fazendo todas as anotações na mão, o que era tedioso, então resolvi escrever no teclado e pensei em criar um repositório no Github para manter minhas anotações públicas no caso de alguem se interessar
 
 Todo o conteúdo aqui é escrito por mim e são meus entendimentos sobre o artigo **_What Every Programmer Should Know About Memory_** do Ulrich Drepper, escrito em 2007, e está sujeito a mudanças e erros, coisas que serão revisadas com o passar do tempo!
 
