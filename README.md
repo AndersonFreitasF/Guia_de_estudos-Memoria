@@ -129,11 +129,8 @@ Enquanto isso, a CPU (milhares de vezes mais rápida) fica parada esperando.
 | [Controlador de Memória](#controlador-de-memória) | Coordena acesso CPU ↔ RAM |
 | [Endereço](#endereço) | Identificação numérica de um dado |
 | [Latência](#latência) | Tempo de espera por um acesso |
-| [Ciclo](#ciclo) | Unidade do clock da CPU |
 | [Linha da Cache](#linha-da-cache) | Bloco de transferência (~64B) |
 | [Prefetcher](#prefetcher) | Tenta prever acessos futuros |
-| [Localidade Espacial](#localidade-espacial) | Dados próximos tendem a ser acessados juntos |
-| [Localidade Temporal](#localidade-temporal) | Dados recentes tendem a ser acessados de novo |
 | [RAS](#ras-row-address-strobe) | Ativa linha da DRAM |
 | [CAS](#cas-column-address-strobe) | Ativa coluna da DRAM |
 | [tRCD](#trcd) | Delay RAS → CAS |
@@ -142,7 +139,5 @@ Enquanto isso, a CPU (milhares de vezes mais rápida) fica parada esperando.
 | [tRAS](#tras) | Tempo mínimo de linha ativa |
 | [Refresh](#refresh) | Recarrega capacitores da DRAM |
 | [Sense Amplifier](#sense-amplifier) | Detecta o valor 0/1 do capacitor |
-| [Bandwidth](#bandwidth) | Dados por unidade de tempo |
-| [Miss de Cache](#miss-de-cache) | Dado não está na cache |
 | [Burst](#burst) | Transferir vários dados seguidos |
 | [Address Lines](#address-lines) | Linhas físicas de endereço no chip |
