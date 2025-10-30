@@ -120,7 +120,7 @@ Esse bloco tem como intuito entender como é feito o cache e como o gargalo da C
 
 Em máquinas antigas, o clock da CPU e das memórias eram equivalentes, mas com o avanço da CPU as memórias não conseguiram acompanhar a frequência do núcleo e tornou-se inevitável a criação das camadas de cache.
 
-As camadas de cache funcionam copiando e armazenando temporariamente os dados e as instruções lidas que ainda estão em uso e são construídas usando as SRAMs, se baseando em 2 princípios fundamentais que podemos ver em qualquer sistema real:
+As camadas de cache funcionam copiando e armazenando temporariamente os dados e as instruções lidas que ainda estão em uso e são construídas usando SRAM, se baseando em 2 princípios fundamentais que podemos ver em qualquer sistema real:
 
 - **Localidade temporal**
 - **Localidade espacial**
@@ -153,12 +153,12 @@ Usando como base a tabela, o fluxo de acesso ocorre da seguinte forma:
    - Se o dado for encontrado, ocorre um **cache hit**
 3. Caso contrário, ocorre um **cache miss** e buscamos o dado na L2
 4. A L2 é consultada:
-   - Se o dado for encontrado, copiamos ele para a L1 e continuamos a execução
+   - Se o dado for encontrado, copiamos ele para a L1
    - Se não for encontrado, buscamos na L3 ou direto na RAM caso não exista L3
 
 > *Lembrando que cada nível é mais lento e mais pesado do que o anterior, como comentado no primeiro capítulo*
 
-Se o dado chegar ao ponto de ser buscado na RAM, a CPU vai literalmente parar enquanto aguarda o dado ser encontrado, pois o processo pode demorar cerca de 200 ciclos, enquanto buscas em caches demoram 15.
+Se o dado chegar ao ponto de ser buscado na RAM, a CPU vai parar enquanto aguarda o dado ser encontrado, pois o processo pode demorar cerca de 200 ciclos, enquanto buscas em caches demoram ~15 ciclos.
 
 Esse atraso é o motivo do conceito de *stall*, onde ocorre parada do pipeline.
 
@@ -170,7 +170,13 @@ Entrando na estrutura física interna das caches, vemos que cada cache é dividi
 
 Quando um dado é lido, a cache carrega toda essa linha do dado, não só o byte.
 
-Então, quando você tenta ler um array no valor [0] em um loop de repetição normal (`for(let i = 1; i < array.length; i++)` por exemplo), a cache carrega toda a linha e os 64 bytes que estão nesse endereço da memória. Então ao acessar o valor [0], a memória carrega valores nesse array que caibam em 64 bytes, até o array[15], por exemplo. Quando você tenta acessar o valor [1], ele já vai estar carregado na memória e você terá zero latência para ler esse dado.
+Então, quando você tenta ler um array no valor [0] em um loop de repetição normal (`for(let i = 1; i < array.length; i++)` por exemplo), a cache carrega toda a linha e os 64 bytes que estão nesse endereço da memória.
+
+Quando você tenta acessar o valor [1], ele já vai estar carregado na memória e você terá praticamente zero latência para ler esse dado.
+
+O processo que acabei de descrever acima é feito por um **prefetcher de hardware**, o que funciona bem para acessos sequenciais, mas é ineficiente em acessos aleatórios como listas encadeadas ou árvores dispersas.
+
+Nesses casos, o prefetcher erra a previsão e gera tráfego desnecessário no barramento.
 
 Essa técnica é chamada de **explorar a localidade espacial**.
 
@@ -180,11 +186,32 @@ Essa técnica é chamada de **explorar a localidade espacial**.
 
 As caches são estruturadas em um modelo de conjuntos (sets), e cada conjunto é estruturado em vias (ways) que podem armazenar várias cache lines. Essa estrutura é usada para definir os tipos de cache, sendo eles:
 
-*-------------WIP-------------------*
+| Tipo | Força de endereçamento | Características |
+|:--------------:|:-------------------------:|:----------------:|
+| Directed map  | 1 linha por endereço       | simples e rápida, mas de fácil colisão |
+| n-way set associative | um endereço pode ir para n posições | reduz colisões, mas o controle é mais complexo |
+| fully associative | qualquer linha pode ir para qualquer posição | lenta e cara, mas extremamente flexível |
+
+> *As caches modernas são tipicamente 8-way ou 16-way*
+
+Quando um endereço chega na cache, ele é mapeado e dividido em 3 partes: **Tag, Index e Offset**
+
+- Tag → identifica o bloco de memória armazenado dentro do conjunto
+- Index → define qual conjunto (set) será consultado
+- Offset → indica o byte dentro da linha de cache (posição 0–63)
 
 ---
 
-## Glossário
+Na leitura, a cache compara o *tag* do endereço pedido com o *tag* armazenado:
+
+- Se bate → **hit**
+- Se não → **miss** e a linha é substituída
+
+Quando dois endereços se mapeiam para o mesmo conjunto, eles competem por espaço e ocorre **conflict miss**, o que gera um **cache thrashing**, processo onde os dados ficam se substituindo sem parar e não permanecem tempo suficiente para serem reutilizados.
+
+--- WIIIIIIIIIIIIIIIIIIIIIIIIIIIIIP---------------------------------------
+
+# Glossário
 
 | Termo | Significado |
 |------|-------------|
@@ -197,7 +224,8 @@ As caches são estruturadas em um modelo de conjuntos (sets), e cada conjunto é
 | Controlador de Memória | Coordena acesso CPU ↔ RAM |
 | Endereço | Identificação numérica de um dado |
 | Latência | Tempo de espera por um acesso |
-| Linha da Cache | Bloco de transferência (~64B) |
+| Ciclo | Pulso do clock da CPU |
+| Cache Line | Bloco de transferência (~64B) |
 | Prefetcher | Tenta prever acessos futuros |
 | RAS | Ativa linha da DRAM |
 | CAS | Ativa coluna da DRAM |
@@ -207,5 +235,13 @@ As caches são estruturadas em um modelo de conjuntos (sets), e cada conjunto é
 | tRAS | Tempo mínimo de linha ativa |
 | Refresh | Recarrega capacitores da DRAM |
 | Sense Amplifier | Detecta o valor 0/1 do capacitor |
-| Burst | Transferir vários dados seguidos |
+| Burst | Transferir vários bytes seguidos |
 | Address Lines | Linhas físicas de endereço no chip |
+| Stall | Parada do pipeline |
+| Associatividade | Quantidade de vias por conjunto |
+| Tag | Identifica o bloco armazenado |
+| Index | Seleciona o conjunto |
+| Offset | Seleciona o byte dentro da linha |
+| Conflict Miss | Miss por colisão de endereço |
+| Cache Thrashing | Substituições sucessivas das mesmas linhas |
+| Barramento | Caminho físico elétrico para transmissão de dados |
