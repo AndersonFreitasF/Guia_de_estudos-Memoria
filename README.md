@@ -33,13 +33,13 @@ Cada etapa desse processo é mais lenta e mais pesada que a anterior, o que caus
 
 | Camada         | Tipo                      | Tamanho (típico) | Latência (aprox.) |
 |:--------------:|:-------------------------:|:----------------:|:----------------:|
-| Registradores  | SRAM*                     | ~1KB             | 1 ciclo |
+| Registradores  | memória dedicada dentro da CPU                    | ~1KB             | 1 ciclo |
 | L1 Cache       | SRAM                      | 32–64KB          | 3–5 ciclos |
 | L2 Cache       | SRAM                      | 256KB–1MB        | 10–20 ciclos |
 | L3 Cache       | SRAM                      | 2–64MB           | 40–70 ciclos |
 | DRAM           | Dinâmica (capacitores)    | GBs              | 150–300 ciclos |
 
-> *A SRAM dos registradores em específico é mais rápida que as demais*  
+> *A memória dos registradores é mais rápida que as SRAMs*  
 > *Entenda 1 ciclo como 1 clock da sua CPU*
 
 ---
