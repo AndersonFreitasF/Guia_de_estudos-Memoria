@@ -20,6 +20,8 @@ Como estou escrevendo enquanto leio o artigo vou seguir um modelo onde escrevo t
    - [Multi-core e coerência](#multi-core-e-coerência)
       - [Estados de coerência](#estados-de-coerência)
       - [Comparativo de protocolos](#comparativo-de-protocolos)
+
+        
 X. [Glossário](#glossário)
 
 ---
