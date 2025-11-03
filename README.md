@@ -16,7 +16,7 @@ Como estou escrevendo enquanto leio o artigo vou seguir um modelo onde escrevo t
 2. [CPU Caches](#capítulo-2---cpu-caches)
    - [Hierarquia de cache e localidade temporal/espacial](#hierarquia-de-cache-e-localidade-temporalespacial)
    - [Mapeamento e associatividade](#mapeamento-e-associatividade)
-   - [Políticas de escrita](#políticas-de-escrita)
+   - [Políticas de escrita e substituição](#políticas-de-escrita-e-substituição)
    - [Multi-core e coerência](#multi-core-e-coerência)
       - [Estados de coerência](#estados-de-coerência)
       - [Comparativo de protocolos](#comparativo-de-protocolos)
@@ -224,7 +224,7 @@ Quando dois endereços se mapeiam para o mesmo conjunto, eles competem por espa�
 
 ---
 
-## Políticas de escrita
+## Políticas de escrita e substituição
 
 Existem duas políticas de escrita principais: Write-through e Write-back
 
@@ -234,8 +234,13 @@ cada escrita vai direto para a RAM e para a cache, o que garante coerência, mas
 **Write-back:**  
 a escrita fica só na cache; a RAM é atualizada depois, o que é muito mais rápido, mas requer mecanismos de controle (bit “dirty”)
 
-Sistemas modernos usam Write-back nas L1/L2, e quase sempre é usado Write-through na L3.
+sistemas modernos usam Write-back nas L1/L2, e quase sempre é usado Write-through na L3.
 
+já a política de escrita ocorre quando um novo dado precisa ser inserido no cache mas ela ja esta cheia
+
+o hardware escolhe qual linha descartar através de (normalmente) LRU, least recently used, ou variantes proximas disso como pseudo-LRU
+
+isso usa o conceito de localidade temporal, mantendo o que foi usado mais recentemente
 ---
 
 ## Multi-core e coerência
