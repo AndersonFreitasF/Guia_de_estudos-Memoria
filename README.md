@@ -85,7 +85,7 @@ Eles **multiplexaram os endereços**, assim reusam as mesmas linhas para o CAS e
 
 Esse processo reduz custo, mas **adiciona tempo de espera**, o que se acumula com outros processos elétricos que geram ainda mais tempo de espera, tais como:
 
-1. O capacitor da célula carrega e descarrega lentamente (milissegundos em escala de tempo da CPU)
+1. O capacitor da célula carrega e descarrega lentamente
 2. O sinal que ele gera é fraco, então precisa de um amplificador (*sense amplifier*) para detectar se é 0 ou 1
 3. Depois, o dado precisa viajar do chip até o controlador (vários centímetros em trilhas físicas)
 
@@ -234,7 +234,7 @@ cada escrita vai direto para a RAM e para a cache, o que garante coerência, mas
 **Write-back:**  
 a escrita fica só na cache; a RAM é atualizada depois, o que é muito mais rápido, mas requer mecanismos de controle (bit “dirty”)
 
-Sistemas modernos usam Write-back nas L1/L2, e às vezes usam Write-through na L3.
+Sistemas modernos usam Write-back nas L1/L2, e quase sempre é usado Write-through na L3.
 
 ---
 
@@ -272,16 +272,28 @@ Os principais protocolos são MESI, MOESI e MESIF, onde cada letra tem um signif
 
 > *chega de tabelas por enquanto*
 
+Esses protocolos fazem parte da CPU e não do SO, e se comunicam atraves de snooping(snoopy mentioned), um mecanismo no barramento
+
+Sempre que um core faz uma operação, acontece o seguinte fluxo:
+
+1. um core anuncia que vai fazer uma mudança em endereço X
+2. os outros cores ouvem (snoop) e ajustam seus estados baseados nessa mudança
+3. hardware decide quem tem a linha válida e se deve invalidar, enviar ou atualizar
+
+   Esse processo acaba gerando algo extremamente similar ao Cache Thrashing, chamado de false sharing, onde 2 threads escrevem em variaveis diferentes mas na mesma linha de cache
+
+    Quando isso acontece os 2 estados mudam para M e ficam constantemente invalidando os outros cores enquanto o programa briga pela linha (Thrashing de coerência)
+
 Sem coerência, um núcleo poderia trabalhar com uma cópia desatualizada da memória.
 
-A coerência é mantida por sinais de controle no barramento interno do chip.
+A coerência é mantida por sinais de controle no barramento.
 
 ---
 
 **TLDR do capítulo:**  
-As otimizações de performance vêm do aproveitamento da localidade espacial e da localidade temporal, agrupando dados que serão usados juntos e fazendo com que dados frequentes caibam na L2 (qualquer coisa além disso já é uma perda enorme de desempenho).
+As otimizações de performance vêm do aproveitamento da localidade espacial e da localidade temporal, agrupando dados que serão usados juntos e fazendo com que dados frequentes caibam na L2 (ou apenas não fazendo elas chegarem a DRAM).
 
-Laços que percorrem arrays em sequência aproveitam o prefetch e as cache lines, sendo mais rápidos do que estruturas de dados dispersas como linked lists, grafos e árvores que têm nós alocados aleatoriamente, pois causam cache misses constantes.
+Laços que percorrem arrays em sequência aproveitam o prefetch e as cache lines, sendo mais rápidos do que estruturas de dados aleatorias como linked lists, grafos e árvores que têm nós alocados aleatoriamente, pois causam cache misses constantes.
 
 ---
 
@@ -326,3 +338,4 @@ Laços que percorrem arrays em sequência aproveitam o prefetch e as cache lines
 | MOESI | Protocolo de coerência |
 | MESIF | Protocolo de coerência |
 | Coerência | Garantir que os núcleos vejam o mesmo dado |
+| Thrashing de coerência | Briga entre 2 cores por uma linha de cache|
