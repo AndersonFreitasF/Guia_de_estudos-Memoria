@@ -213,8 +213,6 @@ Quando um endereço chega na cache, ele é mapeado e dividido em 3 partes: **Tag
 - Index → define qual conjunto (set) será consultado
 - Offset → indica o byte dentro da linha de cache (posição 0–63)
 
----
-
 Na leitura, a cache compara a tag do endereço pedido com a tag armazenada:
 
 - Se bate → **hit**
@@ -241,6 +239,8 @@ já a política de escrita ocorre quando um novo dado precisa ser inserido no ca
 o hardware escolhe qual linha descartar através de (normalmente) LRU, least recently used, ou variantes proximas disso como pseudo-LRU
 
 isso usa o conceito de localidade temporal, mantendo o que foi usado mais recentemente
+
+
 ---
 
 ## Multi-core e coerência
